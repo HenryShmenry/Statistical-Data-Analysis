@@ -1,0 +1,147 @@
+setwd("C:/Users/henry/OneDrive/Documents/RStudio/H2R") # This sets the working directory
+# The working directory is where R looks for any files you wish to input or read from.
+
+
+
+
+
+
+############### LECTURE CONTENT ##############
+####### Principal Component Analysis #######
+prcomp(data, scale = T) # performs PCA on a given data set
+
+# data: numeric data matrix (or data frame)
+# scale: logical value T/F
+
+# The Outputs are:
+# sdev: standard deviations of the principle components
+# center: variable means (before mean centering)
+# rotation: the loadings matrix
+# x: scores matrix
+
+######## PCA Examples + Extras ######
+# Some examples may not make sense as the fattyacids data set is seemingly incomplete.
+
+fattyacids = read.csv("fattyacids.csv", header = T)
+
+mypca = prcomp(fattyacids[,5:14]) # performing pca with selected data ranges
+
+mypca$rotation # shows how much each variable contributes to the principle component
+
+biplot(mypca, cex = 0.7) # creates a biplot
+
+# cex: text / label size
+
+mypca$x # The scores matrix
+
+# If you want a more specific plot using different principal components:
+
+plot(mypca$x[,1], mypca$x[,2], xlab = "PC1", ylab = "PC2", main = "Plot Name", cex = 3)
+
+# xlab: The label on the x-axis
+# main: The title of your plot
+
+text(mypca$x[,1], mypca$x[,2]) 
+# adds labels atop the graph.
+
+plot(mypca$x[,1], mypca$x[,2], xlab = "PC1", ylab = "PC2", main = "Plot Name", cex = 3, col = as.factor(fattyacids$location))
+# This adds colour to your plot based on the location column of the data set.
+
+# Adding pch = 19 into your plot changes the symbol. 
+
+summary(mypca)
+# shows the variance accounted for by each PC
+
+plot(mypca)
+# graphs the variance accounted for by each PC | "Scree Plot"
+
+# We can add percentage labels to the axes with:
+plot(mypca$x[,1], mypca$x[,2], xlab = "PC1 (67.9%)", ylab = "PC2 (28.7%)", col = as.factor(fattyacids$location))
+
+sbdata = fattyacids[19:54,] # only using specific data
+
+dim(sbdata) # shows you the new dimension for the data
+
+newpca = prcomp(sbdata[-35, 5:14]) # re-doing the pca, removing an outlier
+
+plot(newpca$x[,1], newpca$x[,2], xlab = "PC1", ylab = "PC2", col = as.factor(fattyacids$location), pch = 19)
+legend("bottomleft", inset = 0.01, legend = unique(sbdata$location), col = unique(as.factor(sbdata$location)), pch = 20)
+# This would plot a new pca with a legend in the bottom right corner
+# we can change the symbols to represent the fat_type using pch = as.numeric instead of as.factor.
+# there are 25 symbols you can use with pch. pch = 11 is the star of david.
+
+
+####### Cluster Analysis #######
+
+hclust(d, method) # performs hierarchical clustering
+
+# method: agglomeration method used: "single", "complete", "average", "ward", "mcquitty", "median", "centroid".
+# d: distance matrix.
+
+dist(x, method) # produces a distance matrix
+
+# method: distance measure: "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski"
+# x: data matrix
+# If using "minkowski", then the power p also needs to be given as an argument
+
+######## Cluster Analysis: Iris Example ######
+
+d=dist(iris[,1:4], "minkowski", p=3) 
+# Produces a distance matrix from the first 4 columns, the 5th column is the species and not numeric.
+# Typing d will show the lower diagonal matrix.
+
+# To see the full distance matrix use:
+d=dist(iris[,1:4], diag = T, upper = T)
+
+# If the distance measure is not specified, Euclidean will be used.
+
+# Using:
+hcl = hclust(d, "average") # performs hierarchical clustering
+
+# we can plot the dendrogram using:
+plot(hcl, cex = 0.5)
+# cex adjusts the size of the text of each label.
+
+# OR
+
+plot(hcl, labels = iris[,5], cex = 0.5) # this uses the specific names from the 5th column.
+
+rect.hclust(hcl, k) # finds the levels at which there are k clusters and draws a rectangle around them.
+
+# for example, check:
+rect.hclust(hcl, 3)
+
+cutree(hcl, k) # assigns one of the k cluster numbers to each object
+# for example, check:
+cutree(hcl, 3)
+
+c = cophenetic(hcl) # produces the matrix of cophenetic distances
+cor(c, d) # gives the correlation of this with the distance matrix d
+# this can be used to validate your thoughts for a clustering.
+
+?heatmap # this provides another way to visualise the clustering
+
+heatmap(as.matrix(d)) # for just the distance matrix or,
+heatmap(as.matrix(d), Colv = NA, Rowv = NA) # without the clustering
+# Levelplot might be a better option to explore. 
+
+# For k-means we use:
+kmeans(x, k)
+# x: data matrix
+# k: number of clusters
+
+######### Naive Bayes (NB) #####################################################
+install.packages("naivebayes") # Installing the package
+library(naivebayes) # Loading the package
+
+######### Comparing Classifiers in R ###########################################
+model_nb = naive_bayes(train[,2:31], train[,1])
+model_lda = lda(train[,2:31], train[,1])
+
+# The predictions are given by
+pred_nb = predict(model_nb, test[,2:31])
+pred_lda = predict(model_lda, test[2:31])$class 
+# you need the $class due to package variety
+# We can get our confusion matrices using:
+real = test[,1]
+table(true = real, predicted =)
