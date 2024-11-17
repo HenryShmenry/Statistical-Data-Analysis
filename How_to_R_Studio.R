@@ -1,12 +1,8 @@
 setwd("C:/Users/henry/OneDrive/Documents/RStudio/H2R") # This sets the working directory
 # The working directory is where R looks for any files you wish to input or read from.
 
-
-
-
-
-
 ############### LECTURE CONTENT ##############
+
 ####### Principal Component Analysis #######
 prcomp(data, scale = T) # performs PCA on a given data set
 
@@ -69,9 +65,31 @@ legend("bottomleft", inset = 0.01, legend = unique(sbdata$location), col = uniqu
 # This would plot a new pca with a legend in the bottom right corner
 # we can change the symbols to represent the fat_type using pch = as.numeric instead of as.factor.
 # there are 25 symbols you can use with pch. pch = 11 is the star of david.
+# We can add another legend for the extra symbols. 
 
+legend("bottomright", inset = 0.01, legend = unique(sbdata$fat_type), col = "black", pch = unique(as.numeric(sbdata$fat_type)))
 
-####### Cluster Analysis #######
+# we can make a new variable using the paste() function:
+newgroup = as.factor(paste(fattyacids$location, fattyacids$fat_type))
+
+# we can colour based on specific rows: 
+points(mypca$x[10:18, 1], mypca$x[10:18,2], pch = 20, col = "red")
+
+# And of course, we can label each observation:
+text(mypca$x[,1]+0.5, mypca$x[,2], newergroup, cex = 0.5)
+
+####### Function Summary: PCA ######
+?prcomp
+?plot
+?read.csv
+?biplot
+?dim
+?summary
+?legend
+?text
+?points
+
+######### Cluster Analysis #######
 
 hclust(d, method) # performs hierarchical clustering
 
