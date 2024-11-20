@@ -1,5 +1,17 @@
+################################################################################
+########################################## How to Use R Studio (basic)
+###############################################################################
+
+# How do I set the working directory?
+
 setwd("C:/Users/henry/OneDrive/Documents/RStudio/H2R") # This sets the working directory
 # The working directory is where R looks for any files you wish to input or read from.
+
+# How do I remove a row or column from a data set?
+
+table <- read.csv("ra.csv", header = F) # this is just a basic table
+table2 = table[-1,] # this is the table without the first row
+table3 = table[,-1] # this is the table without the first column
 
 ############### LECTURE CONTENT ##############
 
@@ -213,8 +225,18 @@ pred = predict(model, train[,1:4])
 table(predicted = pred$class, real = train[,5])
 
 ######### Naive Bayes (NB) #####################################################
+install.packages("caret")
 install.packages("naivebayes") # Installing the package
+library(caret)
 library(naivebayes) # Loading the package
+
+
+# The package performs naive bayes classification.
+# We can use caret for L-O-O cross-validation (with method = "naive_bayes")
+
+# Using the tumor data as an example:
+tumour = read.csv("tumour.csv")
+nb = train(diagnosis~., method = "naive_bayes", data = tumour, trControl = trainControl(method = "LOOCV"), preProcess = c("center", "scale"))
 
 ######### Comparing Classifiers in R ###########################################
 model_nb = naive_bayes(train[,2:31], train[,1])
