@@ -148,6 +148,70 @@ kmeans(x, k)
 # x: data matrix
 # k: number of clusters
 
+# As an example using the iris data:
+kcl = kmeans(iris[,-5], 3)
+
+plot(kcl$cluster)
+
+pca = prcomp(iris[,-5])
+
+plot(pca$x[,1], pca$x[,2], xlab = "PC1", ylab = "PC2", pch = as.numeric(iris[,-5]), col = kcl$cluster)
+
+# But how do you decide how many clusters you should use in k-means?!
+# There are a couple ways to go about it! 
+
+#Performing k-means:
+library("factoextra") # This is used to the upcoming plots:
+
+fviz_nbclust(data, kmeans, method = "silhouette") # Performs the silhouette method
+
+fviz_nbclust(data, kmeans, method = "gap_stat") # Performs the gap statistic method
+
+# Both these should automatically suggest the optimal number of clusters for a given set of data!
+# You are able to use other packages to present your data, 
+# just be careful to thoroughly look into what your package is doing to your data.
+
+######### Validation #########
+
+# as an example with the iris data set:
+test = rbind(iris[1:10,], iris[51:60,], iris[101:110,]) # Our testing data set
+train = rbind(iris[11:50,], iris[61:100,], iris[111:150,]) # Our training data set
+
+# LDA in R
+library(MASS) # The package used to perform lda
+
+lda() # performs linear discriminant analysis
+
+# The inputs are:
+# x: numeric data matrix for training
+# grouping: vector of class labels for the training data
+
+# The outputs are:
+# prior: The prior probabilities of each group (based on the number of observations in each group)
+# means: The group means
+# scaling: the coefficients of the linear discriminants.
+
+# Eg:
+lda(train[,1:4], train[,5])
+
+# Using the classifier
+predict() # predicts the class 
+
+# The arguments:
+# model: a model produced by lda()
+# data: a numeric data matrix
+
+# The outputs:
+# class: the predicted class of each observation
+# posterior: the posterior probability for each class
+# x: the scores for discriminant functions
+
+pred$class # shows the classes assigned using
+pred = predict(model, train[,1:4])
+
+# this can be compared with the real class in a confusion matrix using:
+table(predicted = pred$class, real = train[,5])
+
 ######### Naive Bayes (NB) #####################################################
 install.packages("naivebayes") # Installing the package
 library(naivebayes) # Loading the package
