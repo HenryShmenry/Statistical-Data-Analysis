@@ -224,6 +224,47 @@ pred = predict(model, train[,1:4])
 # this can be compared with the real class in a confusion matrix using:
 table(predicted = pred$class, real = train[,5])
 
+# We can choose the test set randomly, using:
+n = nrow(iris)
+trainIndex = sample(1:n, size = round(0.7*n), replace = FALSE)
+train = iris[trainIndex ,]
+test = iris[-trainIndex ,]
+
+# K-fold Cross Validation
+# Implemented using the caret package
+train_control <- trainControl(method = "cv", number = 10, savePredictions = TRUE)
+
+lda <- train(Species~., data = iris, method = "lda", metric = "Accuracy", trControl = train_control, preProcess = c("center", "scale"))
+
+# To show the prediction accuracy:
+lda$results
+
+# To show the predictions for each fold:
+lda$pred
+
+# Leave-One-Out Cross Validation
+# Implemented within the lda() function using CV = TRUE:
+model = lda(iris[,1:4], iris[,5], CV = TRUE)
+
+# The percentage correct for each class is given by:
+class = table(iris[,5], model$class)
+diag(prop.table(class, 1))
+
+# The total percentage correct by (accuracy):
+sum(diag(prop.table(class)))
+
+# Adjustments [Section incomplete]
+model = lda(iris[,1:4], iris[,5])
+model$scaling
+plot(model, cex = 0.6, col = as.numeric(iris[,5]))
+
+pred = predict(model, iris[,1:4])
+plot(pred$x, cex = 0.6, col = as.numeric(iris[,5]), pch = as.numeric(pred$class))
+plot(model, dimen = 1)
+
+# Quadratic Discriminant Analysis (QDA)
+qda() # using the MASS library
+
 ######### Naive Bayes (NB) #####################################################
 install.packages("caret")
 install.packages("naivebayes") # Installing the package
